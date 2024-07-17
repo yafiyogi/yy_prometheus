@@ -26,36 +26,14 @@
 
 #pragma once
 
-#include <cstdint>
-
-#include <string>
-
-#include "yy_cpp/yy_vector.h"
+#include <optional>
+#include <string_view>
 
 #include "yy_prometheus_metric_types.h"
-#include "yy_prometheus_labels.h"
 
 namespace yafiyogi::yy_prometheus {
 
-struct MetricData
-{
-    std::string id{};
-    MetricType type{MetricType::None};
-    MetricUnit unit{MetricUnit::None};
-    Labels labels{};
-    std::string value{};
-
-    constexpr bool operator<(const MetricData & other) const noexcept
-    {
-      return std::tie(id, type, unit, labels) < std::tie(other.id, other.type, other.unit, other.labels);
-    }
-
-    constexpr bool operator==(const MetricData & other) const noexcept
-    {
-      return std::tie(id, type, unit, labels) == std::tie(other.id, other.type, other.unit, other.labels);
-    }
-};
-
-using MetricDataVector = yy_quad::simple_vector<MetricData>;
+MetricType decode_metric_type(std::optional<std::string_view> p_type_name);
+MetricUnit decode_metric_unit(const std::optional<std::string_view> p_unit_name);
 
 } // namespace yafiyogi::yy_prometheus

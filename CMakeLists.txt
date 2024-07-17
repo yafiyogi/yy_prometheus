@@ -50,14 +50,17 @@ target_include_directories(yy_prometheus
 
 target_sources(yy_prometheus
   PRIVATE
+  yy_prometheus_configure.cpp
   yy_prometheus_labels.cpp
   yy_prometheus_style.cpp)
 
 set(YY_PROMETHEUS_HEADERS
-  "yy_prometheus_labels.h"
-  "yy_prometheus_labels_fwd.h"
-  "yy_prometheus_metric_data.h"
-  "yy_prometheus_style.h")
+  yy_prometheus_configure.h
+  yy_prometheus_labels.h
+  yy_prometheus_labels_fwd.h
+  yy_prometheus_metric_data.h
+  yy_prometheus_metric_types.h
+  yy_prometheus_style.h)
 
 #add_subdirectory(unit_tests)
 
