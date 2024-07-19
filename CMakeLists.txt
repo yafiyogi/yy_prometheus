@@ -56,6 +56,7 @@ target_sources(yy_prometheus
 
 set(YY_PROMETHEUS_HEADERS
   yy_prometheus_configure.h
+  yy_prometheus_defaults.h
   yy_prometheus_labels.h
   yy_prometheus_labels_fwd.h
   yy_prometheus_metric_data.h

@@ -24,6 +24,8 @@
 
 */
 
+#include <string_view>
+
 #include "yy_cpp/yy_make_lookup.h"
 #include "yy_cpp/yy_string_case.h"
 #include "yy_cpp/yy_string_util.h"
@@ -34,10 +36,10 @@
 
 namespace yafiyogi::yy_prometheus {
 
-static constexpr const std::string_view g_type_guage{"gauge"};
+using namespace std::string_view_literals;
 
 static constexpr const auto metric_types =
-  yy_data::make_lookup<std::string_view, MetricType>({{g_type_guage, MetricType::Guage}});
+  yy_data::make_lookup<std::string_view, MetricType>({{"guage"sv, MetricType::Guage}});
 
 
 MetricType decode_metric_type(std::optional<std::string_view> p_type_name)
@@ -52,30 +54,18 @@ MetricType decode_metric_type(std::optional<std::string_view> p_type_name)
   return MetricType::None;
 }
 
-static constexpr std::string_view g_unit_time{"time"};
-static constexpr std::string_view g_unit_temp{"temp"};
-static constexpr std::string_view g_unit_temperature{"temperature"};
-static constexpr std::string_view g_unit_length{"length"};
-static constexpr std::string_view g_unit_bytes{"bytes"};
-static constexpr std::string_view g_unit_percent{"percent"};
-static constexpr std::string_view g_unit_voltage{"voltage"};
-static constexpr std::string_view g_unit_current{"current"};
-static constexpr std::string_view g_unit_energy{"energy"};
-static constexpr std::string_view g_unit_power{"power"};
-static constexpr std::string_view g_unit_mass{"mass"};
-
 static constexpr const auto metric_units =
-  yy_data::make_lookup<std::string_view, MetricUnit>({{g_unit_time, MetricUnit::Time},
-                                                      {g_unit_temp, MetricUnit::Temperature},
-                                                      {g_unit_temperature, MetricUnit::Temperature},
-                                                      {g_unit_length, MetricUnit::Length},
-                                                      {g_unit_bytes, MetricUnit::Bytes},
-                                                      {g_unit_percent, MetricUnit::Percent},
-                                                      {g_unit_voltage, MetricUnit::Voltage},
-                                                      {g_unit_current, MetricUnit::Current},
-                                                      {g_unit_energy, MetricUnit::Energy},
-                                                      {g_unit_power, MetricUnit::Power},
-                                                      {g_unit_mass, MetricUnit::Mass}});
+  yy_data::make_lookup<std::string_view, MetricUnit>({{"time"sv, MetricUnit::Time},
+                                                      {"temp"sv, MetricUnit::Temperature},
+                                                      {"temperature"sv, MetricUnit::Temperature},
+                                                      {"length"sv, MetricUnit::Length},
+                                                      {"bytes"sv, MetricUnit::Bytes},
+                                                      {"percent"sv, MetricUnit::Percent},
+                                                      {"voltage"sv, MetricUnit::Voltage},
+                                                      {"current"sv, MetricUnit::Current},
+                                                      {"energy"sv, MetricUnit::Energy},
+                                                      {"power"sv, MetricUnit::Power},
+                                                      {"mass"sv, MetricUnit::Mass}});
 
 MetricUnit decode_metric_unit(const std::optional<std::string_view> p_unit_name)
 {

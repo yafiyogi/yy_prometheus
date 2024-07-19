@@ -39,17 +39,12 @@ namespace {
 
 enum class Style { Prometheus, OpenMetric };
 
-constexpr std::string_view g_style_prometheus{"prometheus"};
-constexpr std::string_view g_style_open_metric_1{"openmetric"};
-constexpr std::string_view g_style_open_metric_2{"open metric"};
-constexpr std::string_view g_style_open_metric_3{"open_metric"};
-
 constexpr auto styles =
   yy_data::make_lookup<std::string_view, Style>({{style_prometheus, Style::Prometheus},
                                                  {style_open_metric, Style::OpenMetric},
-                                                 {g_style_open_metric_1, Style::OpenMetric},
-                                                 {g_style_open_metric_2, Style::OpenMetric},
-                                                 {g_style_open_metric_3, Style::OpenMetric}});
+                                                 {"openmetric"sv, Style::OpenMetric},
+                                                 {"open metric"sv, Style::OpenMetric},
+                                                 {"open_metric"sv, Style::OpenMetric}});
 
 metric_style_ptr create_style(std::string_view p_style_name)
 {
@@ -74,7 +69,7 @@ metric_style_ptr create_style(std::string_view p_style_name)
 static std::once_flag g_metric_style_flag;
 static metric_style_ptr g_metric_style;
 static std::once_flag g_metric_style_name_flag;
-static std::string g_metric_style_name{g_style_prometheus};
+static std::string g_metric_style_name{style_prometheus};
 
 const std::string & get_metric_style_name()
 {

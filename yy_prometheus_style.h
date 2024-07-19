@@ -32,6 +32,8 @@
 
 namespace yafiyogi::yy_prometheus {
 
+using namespace std::string_view_literals;
+
 inline constexpr std::string_view style_prometheus{"prometheus"};
 inline constexpr std::string_view style_open_metric{"open-metric"};
 
