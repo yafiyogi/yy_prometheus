@@ -33,7 +33,9 @@
 
 namespace yafiyogi::yy_prometheus {
 
-MetricType decode_metric_type(std::optional<std::string_view> p_type_name);
-MetricUnit decode_metric_unit(const std::optional<std::string_view> p_unit_name);
+MetricType decode_metric_type_name(std::optional<std::string_view> p_type_name);
+std::string_view decode_metric_type(MetricType p_type);
+MetricUnit decode_metric_unit_name(const std::optional<std::string_view> p_unit_name);
+std::string_view decode_metric_unit(MetricUnit p_unit);
 
 } // namespace yafiyogi::yy_prometheus
