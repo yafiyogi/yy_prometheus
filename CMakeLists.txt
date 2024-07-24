@@ -43,6 +43,11 @@ find_package(Boost 1.84.0 REQUIRED COMPONENTS locale)
 
 add_library(yy_prometheus STATIC)
 
+target_compile_options(yy_prometheus
+  PRIVATE
+  "-DSPDLOG_COMPILED_LIB"
+  "-DSPDLOG_FMT_EXTERNAL")
+
 target_include_directories(yy_prometheus
   PRIVATE
     "${CMAKE_INSTALL_PREFIX}/include"
@@ -50,11 +55,13 @@ target_include_directories(yy_prometheus
 
 target_sources(yy_prometheus
   PRIVATE
+  yy_prometheus_cache.cpp
   yy_prometheus_configure.cpp
   yy_prometheus_labels.cpp
   yy_prometheus_style.cpp)
 
 set(YY_PROMETHEUS_HEADERS
+  yy_prometheus_cache.h
   yy_prometheus_configure.h
   yy_prometheus_defaults.h
   yy_prometheus_labels.h
