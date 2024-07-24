@@ -40,10 +40,12 @@ namespace yafiyogi::yy_prometheus {
 struct MetricData
 {
     std::string id{};
+    Labels labels{};
+    std::string help{};
+    int64_t timestamp{};
+    std::string value{};
     MetricType type{MetricType::None};
     MetricUnit unit{MetricUnit::None};
-    Labels labels{};
-    std::string value{};
 
     constexpr bool operator<(const MetricData & other) const noexcept
     {
