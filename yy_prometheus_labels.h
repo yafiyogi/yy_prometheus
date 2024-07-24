@@ -35,8 +35,6 @@
 
 namespace yafiyogi::yy_prometheus {
 
-inline constexpr const std::string_view g_label_help{"help"};
-inline constexpr const std::string_view g_label_timestamp{"timestamp"};
 inline constexpr const std::string_view g_label_topic{"topic"};
 
 class Labels final
@@ -47,6 +45,8 @@ class Labels final
                                          yy_data::ClearAction::Keep,
                                          yy_data::ClearAction::Keep>;
     using size_type = LabelStore::size_type;
+    using TopicLevels = yy_quad::simple_vector<std::string>;
+
     constexpr Labels() noexcept = default;
     constexpr Labels(const Labels &) noexcept = default;
     constexpr Labels(Labels &&) noexcept = default;
@@ -75,7 +75,7 @@ class Labels final
     void set_path(const yy_mqtt::TopicLevels & p_path) noexcept;
 
     [[nodiscard]]
-    const yy_mqtt::TopicLevels & get_path() const noexcept
+    const TopicLevels & get_path() const noexcept
     {
       return m_path;
     }
@@ -88,7 +88,7 @@ class Labels final
 
     constexpr bool operator<(const Labels & other) const noexcept
     {
-      return std::tie(m_metric, m_path, m_labels) <  std::tie(other.m_metric, other.m_path, other.m_labels);
+      return std::tie(m_metric, m_path, m_labels) < std::tie(other.m_metric, other.m_path, other.m_labels);
     }
 
     constexpr bool operator==(const Labels & other) const noexcept
@@ -103,9 +103,9 @@ class Labels final
     }
 
   private:
-    std::string m_metric;
-    LabelStore m_labels;
-    yy_mqtt::TopicLevels m_path;
+    std::string m_metric{};
+    TopicLevels m_path{};
+    LabelStore m_labels{};
 };
 
 } // namespace yafiyogi::yy_prometheus

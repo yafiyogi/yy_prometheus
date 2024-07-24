@@ -41,20 +41,7 @@ void Labels::clear() noexcept
 void Labels::set_label(std::string_view p_label,
                        std::string_view p_value)
 {
-  auto do_set_value = [p_value](auto value, auto) {
-    *value = p_value;
-  };
-
-  if(auto [pos, found] = m_labels.find_value(do_set_value, p_label);
-     !found)
-  {
-    if(auto [label, value, inserted] = m_labels.add_empty(pos);
-       inserted)
-    {
-      *label = p_label;
-      *value = p_value;
-    }
-  }
+  m_labels.emplace_or_assign(std::string{p_label}, std::string{p_value});
 }
 
 const std::string & Labels::get_label(const std::string_view p_label) const noexcept
@@ -80,7 +67,13 @@ void Labels::erase(const std::string_view p_label)
 
 void Labels::set_path(const yy_mqtt::TopicLevels & p_path) noexcept
 {
-  m_path = p_path;
+  m_path.clear(yy_data::ClearAction::Keep);
+  m_path.reserve(p_path.size());
+
+  for(auto level : p_path)
+  {
+    m_path.emplace_back(std::string{level});
+  }
 }
 
 } // namespace yafiyogi::yy_prometheus
