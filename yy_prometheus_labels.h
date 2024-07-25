@@ -45,7 +45,6 @@ class Labels final
                                          yy_data::ClearAction::Keep,
                                          yy_data::ClearAction::Keep>;
     using size_type = LabelStore::size_type;
-    using TopicLevels = yy_quad::simple_vector<std::string>;
 
     constexpr Labels() noexcept = default;
     constexpr Labels(const Labels &) noexcept = default;
@@ -72,10 +71,10 @@ class Labels final
 
     void erase(const std::string_view p_label);
 
-    void set_path(const yy_mqtt::TopicLevels & p_path) noexcept;
+    void set_path(const std::string_view p_topic) noexcept;
 
     [[nodiscard]]
-    const TopicLevels & get_path() const noexcept
+    const yy_mqtt::TopicLevels & get_path() const noexcept
     {
       return m_path;
     }
@@ -104,7 +103,7 @@ class Labels final
 
   private:
     std::string m_metric{};
-    TopicLevels m_path{};
+    yy_mqtt::TopicLevels m_path{};
     LabelStore m_labels{};
 };
 

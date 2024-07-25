@@ -26,6 +26,8 @@
 
 #include <string>
 
+#include "yy_mqtt/yy_mqtt_util.h"
+
 #include "yy_prometheus_labels.h"
 
 namespace yafiyogi::yy_prometheus {
@@ -65,15 +67,11 @@ void Labels::erase(const std::string_view p_label)
   m_labels.erase(p_label);
 }
 
-void Labels::set_path(const yy_mqtt::TopicLevels & p_path) noexcept
+void Labels::set_path(const std::string_view p_topic) noexcept
 {
   m_path.clear(yy_data::ClearAction::Keep);
-  m_path.reserve(p_path.size());
 
-  for(auto level : p_path)
-  {
-    m_path.emplace_back(std::string{level});
-  }
+  yy_mqtt::topic_tokenize(m_path, p_topic);
 }
 
 } // namespace yafiyogi::yy_prometheus
