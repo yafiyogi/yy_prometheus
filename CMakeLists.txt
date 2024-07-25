@@ -70,8 +70,6 @@ target_sources(yy_prometheus
       yy_prometheus_metric_types.h
       yy_prometheus_style.h)
 
-#add_subdirectory(unit_tests)
-
 install(TARGETS yy_prometheus
   EXPORT yy_prometheusTargets
   FILE_SET HEADERS DESTINATION include/yy_prometheus)
@@ -89,8 +87,6 @@ write_basic_package_version_file("yy_prometheusConfigVersion.cmake"
 install(FILES "yy_prometheusConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/yy_prometheusConfigVersion.cmake"
     DESTINATION lib/cmake/yy_prometheus)
 
-get_target_property(YY_PROMETHEUS_HEADERS yy_prometheus HEADER_SET)
-get_target_property(YY_PROMETHEUS_SOURCES yy_prometheus SOURCES)
+#add_subdirectory(unit_tests)
 
-add_custom_target(tidy-all
- COMMAND rm -f clang-tidy.log \; for f in "$$(" echo \"${YY_PROMETHEUS_HEADERS} ${YY_PROMETHEUS_SOURCES}\" | sed -n -e 's/;/ /pg' ")" \; do ${YY_CLANG_TIDY_CMD} ${YY_CLANG_TIDY_OPTIONS} "$$f" -- ${YY_TIDY_COMPILER_OPTIONS} >> clang-tidy.log \; done)
+add_yy_tidy_all(yy_prometheus)
