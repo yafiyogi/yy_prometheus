@@ -29,7 +29,7 @@
 
 cmake_minimum_required(VERSION 3.24)
 
-project(yy_prometheus LANGUAGES CXX)
+project(yy_prometheus LANGUAGES CXX VERSION 0.0.1)
 
 set(YY_ROOT "${PROJECT_SOURCE_DIR}/..")
 set(YY_CMAKE "${YY_ROOT}/yy_cmake")
@@ -55,26 +55,41 @@ target_include_directories(yy_prometheus
 
 target_sources(yy_prometheus
   PRIVATE
-  yy_prometheus_cache.cpp
-  yy_prometheus_configure.cpp
-  yy_prometheus_labels.cpp
-  yy_prometheus_style.cpp)
-
-set(YY_PROMETHEUS_HEADERS
-  yy_prometheus_cache.h
-  yy_prometheus_configure.h
-  yy_prometheus_defaults.h
-  yy_prometheus_labels.h
-  yy_prometheus_labels_fwd.h
-  yy_prometheus_metric_data.h
-  yy_prometheus_metric_types.h
-  yy_prometheus_style.h)
+    yy_prometheus_cache.cpp
+    yy_prometheus_configure.cpp
+    yy_prometheus_labels.cpp
+    yy_prometheus_style.cpp
+  PUBLIC FILE_SET HEADERS
+    FILES
+      yy_prometheus_cache.h
+      yy_prometheus_configure.h
+      yy_prometheus_defaults.h
+      yy_prometheus_labels.h
+      yy_prometheus_labels_fwd.h
+      yy_prometheus_metric_data.h
+      yy_prometheus_metric_types.h
+      yy_prometheus_style.h)
 
 #add_subdirectory(unit_tests)
 
-install(TARGETS yy_prometheus )
-install(FILES ${YY_PROMETHEUS_HEADERS} DESTINATION include/yy_prometheus)
+install(TARGETS yy_prometheus
+  EXPORT yy_prometheusTargets
+  FILE_SET HEADERS DESTINATION include/yy_prometheus)
 
+install(EXPORT yy_prometheusTargets
+  FILE yy_prometheusTargets.cmake
+  NAMESPACE yy_prometheus::
+  DESTINATION lib/cmake/yy_prometheus)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file("yy_prometheusConfigVersion.cmake"
+  VERSION ${yy_prometheus_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+
+install(FILES "yy_prometheusConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/yy_prometheusConfigVersion.cmake"
+    DESTINATION lib/cmake/yy_prometheus)
+
+get_target_property(YY_PROMETHEUS_HEADERS yy_prometheus HEADER_SET)
 get_target_property(YY_PROMETHEUS_SOURCES yy_prometheus SOURCES)
 
 add_custom_target(tidy-all
