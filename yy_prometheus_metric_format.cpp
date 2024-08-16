@@ -92,7 +92,7 @@ static void FormatGauge(MetricBuffer & p_buffer,
   FormatMetricHeaders(p_buffer, p_metric);
 
   fmt::format_to(std::back_inserter(p_buffer),
-                 "{}"sv, p_metric.Value());
+                 " {} "sv, p_metric.Value());
 
   FormatMetricTrailers(p_buffer, p_metric);
 }
