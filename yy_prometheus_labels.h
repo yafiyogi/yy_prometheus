@@ -49,7 +49,6 @@ class Labels final
     constexpr Labels() noexcept = default;
     constexpr Labels(const Labels &) noexcept = default;
     constexpr Labels(Labels &&) noexcept = default;
-    constexpr ~Labels() noexcept = default;
 
     constexpr Labels & operator=(const Labels &) noexcept = default;
     constexpr Labels & operator=(Labels &&) noexcept = default;

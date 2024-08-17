@@ -49,7 +49,6 @@ struct metric_style
     constexpr metric_style & operator=(const metric_style &) noexcept = default;
     constexpr metric_style & operator=(metric_style &&) noexcept = default;
 
-
     virtual int64_t timestamp(clock_type::time_point time) const noexcept = 0;
 };
 using metric_style_ptr = std::unique_ptr<metric_style>;
