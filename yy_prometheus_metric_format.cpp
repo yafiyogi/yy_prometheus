@@ -25,6 +25,7 @@
 */
 
 #include "fmt/core.h"
+#include "fmt/compile.h"
 
 #include "yy_cpp/yy_make_lookup.h"
 
@@ -35,64 +36,77 @@
 namespace yafiyogi::yy_prometheus {
 
 using namespace std::string_view_literals;
+using namespace fmt::literals;
+
+static constexpr auto help_format{"# HELP {} {}\x0a"_cf};
+static constexpr auto type_format{"# TYPE {} {}\x0a"_cf};
+static constexpr auto unit_format{"# UNIT {} {}\x0a"_cf};
 
 void FormatHeaders(MetricBuffer & p_buffer,
                           const MetricData & p_metric,
                           bool p_show_unit)
 {
   fmt::format_to(std::back_inserter(p_buffer),
-                 "# HELP {} {}\x0a"sv,
+                 help_format,
                  p_metric.Id(),
                  p_metric.Help());
   fmt::format_to(std::back_inserter(p_buffer),
-                 "# TYPE {} {}\x0a"sv,
+                 type_format,
                  p_metric.Id(),
                  yy_prometheus::decode_metric_type(p_metric.Type()));
   if(p_show_unit)
   {
     fmt::format_to(std::back_inserter(p_buffer),
-                   "# UNIT {} {}\x0a"sv,
+                   unit_format,
                    p_metric.Id(),
                    yy_prometheus::decode_metric_unit(p_metric.Unit()));
   }
 }
 
-static void FormatMetricHeaders(MetricBuffer & p_buffer,
-                                const MetricData & p_metric)
+
+static constexpr auto labels_start_format{"{}{{"_cf};
+static constexpr auto labels_end_format{"}}"_cf};
+static constexpr auto labels_separator_format{","_cf};
+static constexpr auto label_format{"{}=\"{}\""_cf};
+
+static void FormatMetricLabels(MetricBuffer & p_buffer,
+                               const MetricData & p_metric)
 {
-  fmt::format_to(std::back_inserter(p_buffer), "{}{{"sv,
+  fmt::format_to(std::back_inserter(p_buffer), labels_start_format,
                  p_metric.Id());
 
   bool first = true;
   p_metric.Labels().visit([&first, &p_buffer](const auto & label, const auto & value) {
     if(!first)
     {
-      fmt::format_to(std::back_inserter(p_buffer), ","sv);
+      fmt::format_to(std::back_inserter(p_buffer), labels_separator_format);
     }
     first = false;
     fmt::format_to(std::back_inserter(p_buffer),
-                   "{}=\"{}\""sv,
+                   label_format,
                    label, value);
   });
 
-  fmt::format_to(std::back_inserter(p_buffer), "}}");
+  fmt::format_to(std::back_inserter(p_buffer), labels_end_format);
 }
 
+static constexpr auto metric_end_format{"{}\x0a"_cf};
 static void FormatMetricTrailers(MetricBuffer & p_buffer,
                                  const MetricData & p_metric)
 {
   fmt::format_to(std::back_inserter(p_buffer),
-                 "{}\x0a"sv,
+                 metric_end_format,
                  p_metric.Timestamp());
 }
 
+static constexpr auto guage_format{" {} "_cf};
 static void FormatGauge(MetricBuffer & p_buffer,
                          const MetricData & p_metric)
 {
-  FormatMetricHeaders(p_buffer, p_metric);
+  FormatMetricLabels(p_buffer, p_metric);
 
   fmt::format_to(std::back_inserter(p_buffer),
-                 " {} "sv, p_metric.Value());
+                 guage_format, p_metric.Value());
 
   FormatMetricTrailers(p_buffer, p_metric);
 }
