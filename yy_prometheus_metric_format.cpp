@@ -27,6 +27,7 @@
 #include "fmt/core.h"
 #include "fmt/compile.h"
 
+#include "yy_cpp/yy_int_util.h"
 #include "yy_cpp/yy_make_lookup.h"
 
 #include "yy_prometheus_configure.h"
@@ -46,6 +47,9 @@ void FormatHeaders(MetricBuffer & p_buffer,
                           const MetricData & p_metric,
                           bool p_show_unit)
 {
+  auto metric_type = yy_prometheus::decode_metric_type(p_metric.Type());
+  p_buffer.reserve(p_buffer.size() + ((size_t{9} + p_metric.Id().size()) * (size_t{2} + size_t{p_show_unit})) + p_metric.Help().size() + metric_type.size());
+
   fmt::format_to(std::back_inserter(p_buffer),
                  help_format,
                  p_metric.Id(),
@@ -53,13 +57,16 @@ void FormatHeaders(MetricBuffer & p_buffer,
   fmt::format_to(std::back_inserter(p_buffer),
                  type_format,
                  p_metric.Id(),
-                 yy_prometheus::decode_metric_type(p_metric.Type()));
+                 metric_type);
   if(p_show_unit)
   {
+    auto metric_unit = yy_prometheus::decode_metric_unit(p_metric.Unit());
+    p_buffer.reserve(p_buffer.size() + metric_unit.size());
+
     fmt::format_to(std::back_inserter(p_buffer),
                    unit_format,
                    p_metric.Id(),
-                   yy_prometheus::decode_metric_unit(p_metric.Unit()));
+                   metric_unit);
   }
 }
 
@@ -72,11 +79,13 @@ static constexpr auto label_format{"{}=\"{}\""_cf};
 static void FormatMetricLabels(MetricBuffer & p_buffer,
                                const MetricData & p_metric)
 {
+  p_buffer.reserve(p_buffer.size() + p_metric.Id().size() + size_t{2});
   fmt::format_to(std::back_inserter(p_buffer), labels_start_format,
                  p_metric.Id());
 
   bool first = true;
   p_metric.Labels().visit([&first, &p_buffer](const auto & label, const auto & value) {
+    p_buffer.reserve(p_buffer.size() + size_t{!first} + label.size() + value.size() + size_t{3});
     if(!first)
     {
       fmt::format_to(std::back_inserter(p_buffer), labels_separator_format);
@@ -94,6 +103,7 @@ static constexpr auto metric_end_format{"{}\x0a"_cf};
 static void FormatMetricTrailers(MetricBuffer & p_buffer,
                                  const MetricData & p_metric)
 {
+  p_buffer.reserve(p_buffer.size() + size_t{2} + yy_util::Digits<int64_t>::digits);
   fmt::format_to(std::back_inserter(p_buffer),
                  metric_end_format,
                  p_metric.Timestamp());
@@ -105,6 +115,7 @@ static void FormatGauge(MetricBuffer & p_buffer,
 {
   FormatMetricLabels(p_buffer, p_metric);
 
+  p_buffer.reserve(p_buffer.size() + 2 + p_metric.Value().size());
   fmt::format_to(std::back_inserter(p_buffer),
                  guage_format, p_metric.Value());
 
