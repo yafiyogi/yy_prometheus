@@ -41,7 +41,6 @@ using namespace std::string_view_literals;
 static constexpr const auto metric_type_names =
   yy_data::make_lookup<std::string_view, MetricType>({{g_metric_type_gauge, MetricType::Guage}});
 
-
 MetricType decode_metric_type_name(std::optional<std::string_view> p_type_name)
 {
   if(p_type_name.has_value())
