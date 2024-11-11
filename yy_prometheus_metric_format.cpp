@@ -80,7 +80,8 @@ static void FormatMetricLabels(MetricBuffer & p_buffer,
                                const MetricData & p_metric)
 {
   p_buffer.reserve(p_buffer.size() + p_metric.Id().size() + size_t{2});
-  fmt::format_to(std::back_inserter(p_buffer), labels_start_format,
+  fmt::format_to(std::back_inserter(p_buffer),
+                 labels_start_format,
                  p_metric.Id());
 
   bool first = true;
@@ -88,7 +89,8 @@ static void FormatMetricLabels(MetricBuffer & p_buffer,
     p_buffer.reserve(p_buffer.size() + size_t{!first} + label.size() + value.size() + size_t{3});
     if(!first)
     {
-      fmt::format_to(std::back_inserter(p_buffer), labels_separator_format);
+      fmt::format_to(std::back_inserter(p_buffer),
+                     labels_separator_format);
     }
     first = false;
     fmt::format_to(std::back_inserter(p_buffer),
@@ -96,7 +98,8 @@ static void FormatMetricLabels(MetricBuffer & p_buffer,
                    label, value);
   });
 
-  fmt::format_to(std::back_inserter(p_buffer), labels_end_format);
+  fmt::format_to(std::back_inserter(p_buffer),
+                 labels_end_format);
 }
 
 static constexpr auto metric_end_format{"{}\x0a"_cf};
@@ -117,7 +120,8 @@ static void FormatGauge(MetricBuffer & p_buffer,
 
   p_buffer.reserve(p_buffer.size() + 2 + p_metric.Value().size());
   fmt::format_to(std::back_inserter(p_buffer),
-                 guage_format, p_metric.Value());
+                 guage_format,
+                 p_metric.Value());
 
   FormatMetricTrailers(p_buffer, p_metric);
 }
