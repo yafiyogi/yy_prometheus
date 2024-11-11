@@ -124,7 +124,7 @@ struct MetricData final
     std::string m_id{};
     yafiyogi::yy_prometheus::Labels m_labels{};
     std::string m_help{};
-    int64_t m_timestamp{};
+    int64_t m_timestamp = 0;
     std::string m_value{};
     MetricType m_type{MetricType::None};
     MetricUnit m_unit{MetricUnit::None};
