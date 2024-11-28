@@ -28,7 +28,14 @@
 
 #include <chrono>
 
+#if defined(__GNUC__) && ! defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnrvo"
+
 #include "spdlog/spdlog.h"
+
+#pragma GCC diagnostic pop
+#endif
 
 #include "yy_cpp/yy_flat_set.h"
 

@@ -24,8 +24,15 @@
 
 */
 
+#if defined(__GNUC__) && ! defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnrvo"
+
 #include "fmt/core.h"
 #include "fmt/compile.h"
+
+#pragma GCC diagnostic pop
+#endif
 
 #include "yy_cpp/yy_int_util.h"
 #include "yy_cpp/yy_make_lookup.h"
