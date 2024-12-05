@@ -121,7 +121,7 @@ static void FormatMetricTrailers(MetricBuffer & p_buffer,
                  p_metric.Timestamp());
 }
 
-static constexpr auto guage_format{" {} "_cf};
+static constexpr auto gauge_format{" {} "_cf};
 static void FormatGauge(MetricBuffer & p_buffer,
                          const MetricData & p_metric)
 {
@@ -129,7 +129,7 @@ static void FormatGauge(MetricBuffer & p_buffer,
 
   p_buffer.reserve(p_buffer.size() + 2 + p_metric.Value().size());
   fmt::format_to(std::back_inserter(p_buffer),
-                 guage_format,
+                 gauge_format,
                  p_metric.Value());
 
   FormatMetricTrailers(p_buffer, p_metric);
@@ -142,7 +142,7 @@ static void NoFormat(MetricBuffer & /* p_output */,
 };
 
 static constexpr const auto metric_type_fn =
-  yy_data::make_lookup<MetricType, MetricFormatFn>({{MetricType::Guage, &FormatGauge}});
+  yy_data::make_lookup<MetricType, MetricFormatFn>({{MetricType::Gauge, &FormatGauge}});
 
 MetricFormatFn decode_metric_format_fn(MetricType p_type)
 {

@@ -28,9 +28,9 @@
 
 namespace yafiyogi::yy_prometheus {
 
-enum class MetricType:uint8_t {None, Guage};
+enum class MetricType:uint8_t {None, Gauge};
 
-inline constexpr std::string_view g_metric_type_gauge{"guage"};
+inline constexpr std::string_view g_metric_type_gauge{"gauge"};
 
 enum class MetricUnit:uint8_t {None, Time, Temperature, Length, Bytes, Percent, Voltage, Current, Energy, Power, Mass};
 
