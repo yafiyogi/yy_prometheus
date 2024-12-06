@@ -25,6 +25,7 @@
 */
 
 #include "yy_prometheus_metric_data.h"
+#include "yy_prometheus_metric_format.h"
 
 namespace yafiyogi::yy_prometheus {
 
@@ -32,14 +33,26 @@ MetricData::MetricData(std::string_view p_id,
                        yafiyogi::yy_prometheus::Labels && p_labels,
                        std::string_view p_help,
                        MetricType p_type,
-                       MetricUnit p_unit) noexcept:
+                       MetricUnit p_unit,
+                       MetricTimestamp p_timestamp) noexcept:
   m_id(p_id),
   m_labels(std::move(p_labels)),
   m_help(p_help),
   m_type(p_type),
-  m_unit(p_unit),
-  m_format(decode_metric_format_fn(p_type))
+  m_unit(p_unit)
 {
+  switch(p_timestamp)
+  {
+    case MetricTimestamp::Off:
+      m_format = decode_metric_format_fn(p_type);
+      break;
+
+    case MetricTimestamp::On:
+      [[fallthrough]];
+    default:
+      m_format = decode_metric_timestamp_format_fn(p_type);
+      break;
+  }
 }
 
 void MetricData::Labels(const yafiyogi::yy_prometheus::Labels & p_labels) noexcept
