@@ -39,7 +39,8 @@ namespace yafiyogi::yy_prometheus {
 using namespace std::string_view_literals;
 
 static constexpr const auto metric_type_names =
-  yy_data::make_lookup<std::string_view, MetricType>({{g_metric_type_gauge, MetricType::Gauge}});
+  yy_data::make_lookup<std::string_view, MetricType>(MetricType::None,
+                                                     {{g_metric_type_gauge, MetricType::Gauge}});
 
 MetricType decode_metric_type_name(std::optional<std::string_view> p_type_name)
 {
@@ -47,23 +48,25 @@ MetricType decode_metric_type_name(std::optional<std::string_view> p_type_name)
   {
     const std::string type_name{yy_util::to_lower(yy_util::trim(p_type_name.value()))};
 
-    return metric_type_names.lookup(type_name, MetricType::None);
+    return metric_type_names.lookup(type_name);
   }
 
   return MetricType::None;
 }
 
 static constexpr const auto metric_types =
-  yy_data::make_lookup<MetricType, std::string_view>({{MetricType::Gauge, g_metric_type_gauge}});
+  yy_data::make_lookup<MetricType, std::string_view>(""sv,
+                                                     {{MetricType::Gauge, g_metric_type_gauge}});
 
 
 std::string_view decode_metric_type(MetricType p_type)
 {
-  return metric_types.lookup(p_type, ""sv);
+  return metric_types.lookup(p_type);
 }
 
 static constexpr const auto metric_unit_names =
-  yy_data::make_lookup<std::string_view, MetricUnit>({{g_metric_unit_time, MetricUnit::Time},
+  yy_data::make_lookup<std::string_view, MetricUnit>(MetricUnit::None,
+                                                     {{g_metric_unit_time, MetricUnit::Time},
                                                       {"temp"sv, MetricUnit::Temperature},
                                                       {g_metric_unit_temperature, MetricUnit::Temperature},
                                                       {g_metric_unit_length, MetricUnit::Length},
@@ -81,14 +84,15 @@ MetricUnit decode_metric_unit_name(const std::optional<std::string_view> p_unit_
   {
     const std::string unit_name{yy_util::to_lower(yy_util::trim(p_unit_name.value()))};
 
-    return metric_unit_names.lookup(unit_name, MetricUnit::None);
+    return metric_unit_names.lookup(unit_name);
   }
 
   return MetricUnit::None;
 }
 
 static constexpr const auto metric_units =
-  yy_data::make_lookup<MetricUnit, std::string_view>({{MetricUnit::Time, g_metric_unit_time},
+  yy_data::make_lookup<MetricUnit, std::string_view>(""sv,
+                                                     {{MetricUnit::Time, g_metric_unit_time},
                                                       {MetricUnit::Temperature, g_metric_unit_temperature},
                                                       {MetricUnit::Length, g_metric_unit_length},
                                                       {MetricUnit::Bytes, g_metric_unit_bytes},
@@ -101,7 +105,7 @@ static constexpr const auto metric_units =
 
 std::string_view decode_metric_unit(MetricUnit p_unit)
 {
-  return metric_units.lookup(p_unit, ""sv);
+  return metric_units.lookup(p_unit);
 }
 
 } // namespace yafiyogi::yy_prometheus
