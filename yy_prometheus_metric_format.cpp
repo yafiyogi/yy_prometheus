@@ -36,8 +36,6 @@
 #pragma GCC diagnostic pop
 #endif
 
-#include "spdlog/spdlog.h"
-
 #include "yy_cpp/yy_int_util.h"
 #include "yy_cpp/yy_make_lookup.h"
 
@@ -117,7 +115,6 @@ static constexpr auto gauge_format{" {}\x0a"_cf};
 static void FormatGauge(MetricBuffer & p_buffer,
                          const MetricData & p_metric)
 {
-  spdlog::debug("FormatGaugeTimestamp");
   FormatMetricLabels(p_buffer, p_metric);
 
   auto & value = p_metric.Value();
@@ -132,7 +129,6 @@ static constexpr auto gauge_timestamp_format{" {} {}\x0a"_cf};
 static void FormatGaugeTimestamp(MetricBuffer & p_buffer,
                                  const MetricData & p_metric)
 {
-  spdlog::debug("FormatGaugeTimestamp");
   FormatMetricLabels(p_buffer, p_metric);
 
   auto & value = p_metric.Value();
@@ -147,7 +143,6 @@ static void FormatGaugeTimestamp(MetricBuffer & p_buffer,
 void NoFormat(MetricBuffer & /* p_output */,
                      const MetricData & /* p_metric */)
 {
-  spdlog::debug("NoFormat");
 }
 
 static constexpr const auto metric_type_fn =
