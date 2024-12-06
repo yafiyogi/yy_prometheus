@@ -40,7 +40,8 @@ namespace {
 enum class Style { Prometheus, OpenMetric };
 
 constexpr auto styles =
-  yy_data::make_lookup<std::string_view, Style>({{style_prometheus, Style::Prometheus},
+  yy_data::make_lookup<std::string_view, Style>(Style::Prometheus,
+                                                {{style_prometheus, Style::Prometheus},
                                                  {style_open_metric, Style::OpenMetric},
                                                  {"openmetric"sv, Style::OpenMetric},
                                                  {"open metric"sv, Style::OpenMetric},
@@ -52,7 +53,7 @@ metric_style_ptr create_style(std::string_view p_style_name)
 
   std::string style_name{yy_util::to_lower(yy_util::trim(p_style_name))};
 
-  switch(styles.lookup(style_name, Style::Prometheus))
+  switch(styles.lookup(style_name))
   {
     case Style::Prometheus:
       style = std::make_unique<prometheus_style>();
