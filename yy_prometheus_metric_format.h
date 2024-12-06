@@ -37,7 +37,11 @@ using MetricBuffer = yy_quad::simple_vector<char>;
 using MetricFormatFn = void (*)(MetricBuffer & output,
                                 const MetricData &);
 
+void NoFormat(MetricBuffer & /* p_output */,
+              const MetricData & /* p_metric */);
+
 MetricFormatFn decode_metric_format_fn(MetricType type);
+MetricFormatFn decode_metric_timestamp_format_fn(MetricType type);
 
 void FormatHeaders(MetricBuffer & p_buffer,
                    const MetricData & p_metric,

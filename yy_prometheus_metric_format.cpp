@@ -36,6 +36,8 @@
 #pragma GCC diagnostic pop
 #endif
 
+#include "spdlog/spdlog.h"
+
 #include "yy_cpp/yy_int_util.h"
 #include "yy_cpp/yy_make_lookup.h"
 
@@ -111,42 +113,59 @@ static void FormatMetricLabels(MetricBuffer & p_buffer,
                  labels_end_format);
 }
 
-static constexpr auto metric_end_format{"{}\x0a"_cf};
-static void FormatMetricTrailers(MetricBuffer & p_buffer,
-                                 const MetricData & p_metric)
-{
-  p_buffer.reserve(p_buffer.size() + size_t{2} + yy_util::Digits<int64_t>::digits);
-  fmt::format_to(std::back_inserter(p_buffer),
-                 metric_end_format,
-                 p_metric.Timestamp());
-}
-
-static constexpr auto gauge_format{" {} "_cf};
+static constexpr auto gauge_format{" {}\x0a"_cf};
 static void FormatGauge(MetricBuffer & p_buffer,
                          const MetricData & p_metric)
 {
+  spdlog::debug("FormatGaugeTimestamp");
   FormatMetricLabels(p_buffer, p_metric);
 
-  p_buffer.reserve(p_buffer.size() + 2 + p_metric.Value().size());
+  auto & value = p_metric.Value();
+  p_buffer.reserve(p_buffer.size() + size_t{3} + value.size());
+
   fmt::format_to(std::back_inserter(p_buffer),
                  gauge_format,
-                 p_metric.Value());
-
-  FormatMetricTrailers(p_buffer, p_metric);
+                 value);
 }
 
+static constexpr auto gauge_timestamp_format{" {} {}\x0a"_cf};
+static void FormatGaugeTimestamp(MetricBuffer & p_buffer,
+                                 const MetricData & p_metric)
+{
+  spdlog::debug("FormatGaugeTimestamp");
+  FormatMetricLabels(p_buffer, p_metric);
 
-static void NoFormat(MetricBuffer & /* p_output */,
+  auto & value = p_metric.Value();
+  p_buffer.reserve(p_buffer.size() + size_t{3} + value.size() + yy_util::Digits<decltype(p_metric.Timestamp())>::digits);
+
+  fmt::format_to(std::back_inserter(p_buffer),
+                 gauge_timestamp_format,
+                 value,
+                 p_metric.Timestamp());
+}
+
+void NoFormat(MetricBuffer & /* p_output */,
                      const MetricData & /* p_metric */)
 {
-};
+  spdlog::debug("NoFormat");
+}
 
 static constexpr const auto metric_type_fn =
-  yy_data::make_lookup<MetricType, MetricFormatFn>({{MetricType::Gauge, &FormatGauge}});
+  yy_data::make_lookup<MetricType, MetricFormatFn>(&NoFormat,
+                                                   {{MetricType::Gauge, &FormatGauge}});
 
 MetricFormatFn decode_metric_format_fn(MetricType p_type)
 {
-  return metric_type_fn.lookup(p_type, &NoFormat);
+  return metric_type_fn.lookup(p_type);
+}
+
+static constexpr const auto metric_timestamp_type_fn =
+  yy_data::make_lookup<MetricType, MetricFormatFn>(&NoFormat,
+                                                   {{MetricType::Gauge, &FormatGaugeTimestamp}});
+
+MetricFormatFn decode_metric_timestamp_format_fn(MetricType p_type)
+{
+  return metric_timestamp_type_fn.lookup(p_type);
 }
 
 } // namespace yafiyogi::yy_prometheus

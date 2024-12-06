@@ -34,6 +34,8 @@ inline constexpr std::string_view g_metric_type_gauge{"gauge"};
 
 enum class MetricUnit:uint8_t {None, Time, Temperature, Length, Bytes, Percent, Voltage, Current, Energy, Power, Mass};
 
+enum class MetricTimestamp:uint8_t { On, Off };
+
 inline constexpr std::string_view g_metric_unit_time{"time"};
 inline constexpr std::string_view g_metric_unit_temperature{"temperature"};
 inline constexpr std::string_view g_metric_unit_length{"length"};
