@@ -44,7 +44,8 @@ struct MetricData final
                Labels && p_labels,
                std::string_view p_help,
                MetricType p_type,
-               MetricUnit p_unit) noexcept;
+               MetricUnit p_unit,
+               MetricTimestamp p_timestamp) noexcept;
 
     constexpr MetricData() noexcept = default;
     constexpr MetricData(const MetricData &) noexcept = default;
@@ -129,9 +130,6 @@ struct MetricData final
     MetricType m_type{MetricType::None};
     MetricUnit m_unit{MetricUnit::None};
     MetricFormatFn m_format = &NoFormat;
-
-    static void NoFormat(MetricBuffer & /* output */,
-                         const MetricData & /* metric */) {};
 };
 
 using MetricDataVector = yy_quad::simple_vector<MetricData>;
