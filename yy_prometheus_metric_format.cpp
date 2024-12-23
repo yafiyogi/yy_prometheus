@@ -24,17 +24,8 @@
 
 */
 
-#if ( defined(__GNUC__) && __GNUC__ > 12 ) && ! defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnrvo"
-#endif
-
 #include "fmt/core.h"
 #include "fmt/compile.h"
-
-#if ( defined(__GNUC__) && __GNUC__ > 12 ) && ! defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
 
 #include "yy_cpp/yy_int_util.h"
 #include "yy_cpp/yy_make_lookup.h"
