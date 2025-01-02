@@ -24,7 +24,7 @@
 
 */
 
-#include "fmt/core.h"
+#include "fmt/format.h"
 #include "fmt/compile.h"
 
 #include "yy_cpp/yy_int_util.h"
@@ -108,7 +108,7 @@ static void FormatGauge(MetricBuffer & p_buffer,
 {
   FormatMetricLabels(p_buffer, p_metric);
 
-  auto & value = p_metric.Value();
+  auto value = p_metric.Value();
   p_buffer.reserve(p_buffer.size() + size_t{3} + value.size());
 
   fmt::format_to(std::back_inserter(p_buffer),
@@ -116,19 +116,22 @@ static void FormatGauge(MetricBuffer & p_buffer,
                  value);
 }
 
-static constexpr auto gauge_timestamp_format{" {} {}\x0a"_cf};
+//static constexpr auto gauge_timestamp_format{" {} {}\x0a"_cf};
+static constexpr auto gauge_timestamp_format{" {} {}\x0a"sv};
 static void FormatGaugeTimestamp(MetricBuffer & p_buffer,
                                  const MetricData & p_metric)
 {
   FormatMetricLabels(p_buffer, p_metric);
 
-  auto & value = p_metric.Value();
-  p_buffer.reserve(p_buffer.size() + size_t{3} + value.size() + yy_util::Digits<decltype(p_metric.Timestamp())>::digits);
+  auto value = p_metric.Value();
+  auto timestamp = p_metric.Timestamp();
+
+  p_buffer.reserve(p_buffer.size() + size_t{3} + value.size() + yy_util::Digits<decltype(timestamp)>::digits);
 
   fmt::format_to(std::back_inserter(p_buffer),
                  gauge_timestamp_format,
                  value,
-                 p_metric.Timestamp());
+                 timestamp);
 }
 
 void NoFormat(MetricBuffer & /* p_output */,
