@@ -101,7 +101,7 @@ struct MetricData final
       m_timestamp = p_timestamp;
     }
 
-    constexpr const std::string & Value() const noexcept
+    constexpr const std::string_view Value() const noexcept
     {
       return m_value;
     }
