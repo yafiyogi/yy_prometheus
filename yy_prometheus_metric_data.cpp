@@ -30,7 +30,7 @@
 namespace yafiyogi::yy_prometheus {
 
 MetricData::MetricData(std::string_view p_id,
-                       yafiyogi::yy_prometheus::Labels && p_labels,
+                       yy_prometheus::Labels && p_labels,
                        std::string_view p_help,
                        MetricType p_type,
                        MetricUnit p_unit,
@@ -55,7 +55,7 @@ MetricData::MetricData(std::string_view p_id,
   }
 }
 
-void MetricData::Labels(const yafiyogi::yy_prometheus::Labels & p_labels) noexcept
+void MetricData::Labels(const yy_prometheus::Labels & p_labels) noexcept
 {
   m_labels = p_labels;
 }

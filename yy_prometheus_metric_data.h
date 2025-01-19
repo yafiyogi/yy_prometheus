@@ -41,7 +41,7 @@ namespace yafiyogi::yy_prometheus {
 struct MetricData final
 {
     MetricData(std::string_view p_id,
-               Labels && p_labels,
+               yy_prometheus::Labels && p_labels,
                std::string_view p_help,
                MetricType p_type,
                MetricUnit p_unit,
@@ -74,17 +74,17 @@ struct MetricData final
       return m_id;
     }
 
-    constexpr yafiyogi::yy_prometheus::Labels & Labels() noexcept
+    constexpr yy_prometheus::Labels & Labels() noexcept
     {
       return m_labels;
     }
 
-    constexpr const yafiyogi::yy_prometheus::Labels & Labels() const noexcept
+    constexpr const yy_prometheus::Labels & Labels() const noexcept
     {
       return m_labels;
     }
 
-    void Labels(const yafiyogi::yy_prometheus::Labels & p_labels) noexcept;
+    void Labels(const yy_prometheus::Labels & p_labels) noexcept;
 
     constexpr const std::string & Help() const noexcept
     {
@@ -123,7 +123,7 @@ struct MetricData final
 
   private:
     std::string m_id{};
-    yafiyogi::yy_prometheus::Labels m_labels{};
+    yy_prometheus::Labels m_labels{};
     std::string m_help{};
     int64_t m_timestamp = 0;
     std::string m_value{};
