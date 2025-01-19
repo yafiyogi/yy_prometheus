@@ -37,7 +37,6 @@ const std::string g_empty_str{};
 void Labels::clear() noexcept
 {
   m_labels.clear();
-  m_path.clear();
 }
 
 void Labels::set_label(std::string_view p_label,
@@ -65,13 +64,6 @@ const std::string & Labels::get_label(const std::string_view p_label) const noex
 void Labels::erase(const std::string_view p_label)
 {
   m_labels.erase(p_label);
-}
-
-void Labels::set_path(const std::string_view p_topic) noexcept
-{
-  m_path.clear(yy_data::ClearAction::Keep);
-
-  yy_mqtt::topic_tokenize(m_path, p_topic);
 }
 
 } // namespace yafiyogi::yy_prometheus

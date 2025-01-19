@@ -70,14 +70,6 @@ class Labels final
 
     void erase(const std::string_view p_label);
 
-    void set_path(const std::string_view p_topic) noexcept;
-
-    [[nodiscard]]
-    const yy_mqtt::TopicLevels & get_path() const noexcept
-    {
-      return m_path;
-    }
-
     [[nodiscard]]
     constexpr size_t size() const noexcept
     {
@@ -86,12 +78,12 @@ class Labels final
 
     constexpr bool operator<(const Labels & other) const noexcept
     {
-      return std::tie(m_metric, m_path, m_labels) < std::tie(other.m_metric, other.m_path, other.m_labels);
+      return std::tie(m_metric, m_labels) < std::tie(other.m_metric, other.m_labels);
     }
 
     constexpr bool operator==(const Labels & other) const noexcept
     {
-      return std::tie(m_metric, m_path, m_labels) == std::tie(other.m_metric, other.m_path, other.m_labels);
+      return std::tie(m_metric, m_labels) == std::tie(other.m_metric, other.m_labels);
     }
 
     template<typename Visitor>
@@ -102,7 +94,6 @@ class Labels final
 
   private:
     std::string m_metric{};
-    yy_mqtt::TopicLevels m_path{};
     LabelStore m_labels{};
 };
 
