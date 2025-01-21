@@ -78,12 +78,12 @@ class Labels final
 
     constexpr bool operator<(const Labels & other) const noexcept
     {
-      return std::tie(m_metric, m_labels) < std::tie(other.m_metric, other.m_labels);
+      return m_labels < other.m_labels;
     }
 
     constexpr bool operator==(const Labels & other) const noexcept
     {
-      return std::tie(m_metric, m_labels) == std::tie(other.m_metric, other.m_labels);
+      return m_labels == other.m_labels;
     }
 
     template<typename Visitor>
@@ -93,7 +93,6 @@ class Labels final
     }
 
   private:
-    std::string m_metric{};
     LabelStore m_labels{};
 };
 
