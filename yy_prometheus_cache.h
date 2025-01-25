@@ -32,7 +32,7 @@
 
 namespace yafiyogi::yy_prometheus {
 
-class MetricDataCache
+class MetricDataCache final
 {
   public:
     void Add(const MetricData & p_metric_data);

@@ -53,7 +53,7 @@ struct metric_style
 };
 using metric_style_ptr = std::unique_ptr<metric_style>;
 
-struct prometheus_style:
+struct prometheus_style final:
       metric_style
 {
     constexpr int64_t timestamp(clock_type::time_point time_point) const noexcept override
@@ -62,7 +62,7 @@ struct prometheus_style:
     }
 };
 
-struct open_metric_style:
+struct open_metric_style final:
       metric_style
 {
     constexpr int64_t timestamp(clock_type::time_point time_point) const noexcept override
