@@ -44,8 +44,6 @@ class Labels final
                                          std::string,
                                          yy_data::ClearAction::Keep,
                                          yy_data::ClearAction::Keep>;
-    using size_type = LabelStore::size_type;
-
     constexpr Labels() noexcept = default;
     constexpr Labels(const Labels &) noexcept = default;
     constexpr Labels(Labels &&) noexcept = default;
