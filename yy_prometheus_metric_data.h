@@ -49,10 +49,43 @@ struct MetricData final
 
     constexpr MetricData() noexcept = default;
     constexpr MetricData(const MetricData &) noexcept = default;
-    constexpr MetricData(MetricData &&) noexcept = default;
+    constexpr MetricData(MetricData && p_other) noexcept:
+      m_id(std::move(p_other.m_id)),
+      m_labels(std::move(p_other.m_labels)),
+      m_help(std::move(p_other.m_help)),
+      m_timestamp(p_other.m_timestamp),
+      m_value(std::move(p_other.m_value)),
+      m_type(p_other.m_type),
+      m_unit(p_other.m_unit),
+      m_format(p_other.m_format)
+    {
+      m_timestamp = 0;
+      m_type = MetricType::None;
+      m_unit = MetricUnit::None;
+      m_format = &NoFormat;
+    }
 
     constexpr MetricData & operator=(const MetricData &) noexcept = default;
-    constexpr MetricData & operator=(MetricData &&) noexcept = default;
+    constexpr MetricData & operator=(MetricData && p_other) noexcept
+    {
+      if(this != &p_other)
+      {
+        m_id = std::move(p_other.m_id);
+        m_labels = std::move(p_other.m_labels);
+        m_help = std::move(p_other.m_help);
+        m_timestamp = p_other.m_timestamp;
+        p_other.m_timestamp = 0;
+        m_value = std::move(p_other.m_value);
+        m_type = p_other.m_type;
+        p_other.m_type = MetricType::None;
+        m_unit = p_other.m_unit;
+        p_other.m_unit = MetricUnit::None;
+        m_format = p_other.m_format;
+        p_other.m_format = &NoFormat;
+      }
+
+      return *this;
+    }
 
     constexpr bool operator<(const MetricData & other) const noexcept
     {
@@ -127,8 +160,8 @@ struct MetricData final
     std::string m_help{};
     int64_t m_timestamp = 0;
     std::string m_value{};
-    MetricType m_type{MetricType::None};
-    MetricUnit m_unit{MetricUnit::None};
+    MetricType m_type = MetricType::None;
+    MetricUnit m_unit = MetricUnit::None;
     MetricFormatFn m_format = &NoFormat;
 };
 
