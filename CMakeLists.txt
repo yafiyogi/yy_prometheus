@@ -41,12 +41,15 @@ add_library(yy_prometheus STATIC)
 
 target_compile_options(yy_prometheus
   PRIVATE
-  "-DSPDLOG_COMPILED_LIB"
-  "-DSPDLOG_FMT_EXTERNAL")
+    "-DSPDLOG_COMPILED_LIB"
+    "-DSPDLOG_FMT_EXTERNAL")
+
+target_include_directories(yy_prometheus
+  PRIVATE
+    "${CMAKE_INSTALL_PREFIX}/include")
 
 target_include_directories(yy_prometheus
   SYSTEM PRIVATE
-    "${CMAKE_INSTALL_PREFIX}/include"
     "${YY_THIRD_PARTY_LIBRARY}/include" )
 
 target_sources(yy_prometheus
