@@ -47,9 +47,9 @@ void Labels::set_label(std::string_view p_label,
 
 const std::string & Labels::get_label(const std::string_view p_label) const noexcept
 {
-  const std::string * label = &g_empty_str;
+  LabelStore::const_value_ptr label{&g_empty_str};
 
-  auto do_get_value = [&label](const std::string * p_visitor_label, auto) {
+  auto do_get_value = [&label](auto p_visitor_label, auto) {
     if(nullptr != p_visitor_label)
     {
       label = p_visitor_label;
