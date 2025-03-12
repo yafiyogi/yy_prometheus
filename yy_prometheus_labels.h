@@ -29,6 +29,7 @@
 #include <string>
 #include <string_view>
 
+#include "yy_cpp/yy_clear_action.h"
 #include "yy_cpp/yy_flat_map.h"
 
 #include "yy_mqtt/yy_mqtt_types.h"
@@ -52,6 +53,7 @@ class Labels final
     constexpr Labels & operator=(Labels &&) noexcept = default;
 
     void clear() noexcept;
+    void clear(yy_data::ClearAction p_clear_action) noexcept;
     void set_label(std::string_view p_label,
                    std::string_view p_value);
 

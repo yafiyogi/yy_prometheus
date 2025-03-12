@@ -39,6 +39,11 @@ void Labels::clear() noexcept
   m_labels.clear();
 }
 
+void Labels::clear(yy_data::ClearAction p_clear_action) noexcept
+{
+  m_labels.clear(p_clear_action);
+}
+
 void Labels::set_label(std::string_view p_label,
                        std::string_view p_value)
 {
