@@ -44,8 +44,8 @@ static constexpr auto type_format{"# TYPE {} {}\x0a"_cf};
 static constexpr auto unit_format{"# UNIT {} {}\x0a"_cf};
 
 void FormatHeaders(MetricBuffer & p_buffer,
-                          const MetricData & p_metric,
-                          bool p_show_unit)
+                   const MetricData & p_metric,
+                   bool p_show_unit)
 {
   auto metric_type = yy_prometheus::decode_metric_type(p_metric.Type());
   p_buffer.reserve(p_buffer.size() + ((size_type{9} + p_metric.Id().size()) * (size_type{2} + size_type{p_show_unit})) + p_metric.Help().size() + metric_type.size());
@@ -104,7 +104,7 @@ static void FormatMetricLabels(MetricBuffer & p_buffer,
 
 static constexpr auto gauge_format{" {}\x0a"_cf};
 static void FormatGauge(MetricBuffer & p_buffer,
-                         const MetricData & p_metric)
+                        const MetricData & p_metric)
 {
   FormatMetricLabels(p_buffer, p_metric);
 
@@ -135,7 +135,7 @@ static void FormatGaugeTimestamp(MetricBuffer & p_buffer,
 }
 
 void NoFormat(MetricBuffer & /* p_output */,
-                     const MetricData & /* p_metric */)
+              const MetricData & /* p_metric */)
 {
 }
 
