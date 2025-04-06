@@ -30,7 +30,7 @@
 #include "yy_cpp/yy_string_case.h"
 #include "yy_cpp/yy_string_util.h"
 
-#include "yy_prometheus_metric_data.h"
+#include "yy_values/yy_values_metric_data.hpp"
 
 #include "yy_prometheus_configure.h"
 

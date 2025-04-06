@@ -44,28 +44,28 @@ static constexpr auto type_format{"# TYPE {} {}\x0a"_cf};
 static constexpr auto unit_format{"# UNIT {} {}\x0a"_cf};
 
 void FormatHeaders(MetricBuffer & p_buffer,
-                   const MetricData & p_metric,
+                   const MetricData & p_metric_data,
                    bool p_show_unit)
 {
-  auto metric_type = yy_prometheus::decode_metric_type(p_metric.Type());
-  p_buffer.reserve(p_buffer.size() + ((size_type{9} + p_metric.Id().size()) * (size_type{2} + size_type{p_show_unit})) + p_metric.Help().size() + metric_type.size());
+  auto metric_type = yy_prometheus::decode_metric_type(p_metric_data.MetricType());
+  p_buffer.reserve(p_buffer.size() + ((size_type{9} + p_metric_data.Id().Name().size()) * (size_type{2} + size_type{p_show_unit})) + p_metric_data.Help().size() + metric_type.size());
 
   fmt::format_to(std::back_inserter(p_buffer),
                  help_format,
-                 p_metric.Id(),
-                 p_metric.Help());
+                 p_metric_data.Id().Name(),
+                 p_metric_data.Help());
   fmt::format_to(std::back_inserter(p_buffer),
                  type_format,
-                 p_metric.Id(),
+                 p_metric_data.Id().Name(),
                  metric_type);
   if(p_show_unit)
   {
-    auto metric_unit = yy_prometheus::decode_metric_unit(p_metric.Unit());
+    auto metric_unit = yy_prometheus::decode_metric_unit(p_metric_data.Unit());
     p_buffer.reserve(p_buffer.size() + metric_unit.size());
 
     fmt::format_to(std::back_inserter(p_buffer),
                    unit_format,
-                   p_metric.Id(),
+                   p_metric_data.Id().Name(),
                    metric_unit);
   }
 }
@@ -77,15 +77,15 @@ static constexpr auto labels_separator_format{","_cf};
 static constexpr auto label_format{"{}=\"{}\""_cf};
 
 static void FormatMetricLabels(MetricBuffer & p_buffer,
-                               const MetricData & p_metric)
+                               const MetricData & p_metric_data)
 {
-  p_buffer.reserve(p_buffer.size() + p_metric.Id().size() + size_type{2});
+  p_buffer.reserve(p_buffer.size() + p_metric_data.Id().Name().size() + size_type{2});
   fmt::format_to(std::back_inserter(p_buffer),
                  labels_start_format,
-                 p_metric.Id());
+                 p_metric_data.Id().Name());
 
   bool first = true;
-  p_metric.Labels().visit([&first, &p_buffer](const auto & label, const auto & value) {
+  p_metric_data.Labels().visit([&first, &p_buffer](const auto & label, const auto & value) {
     p_buffer.reserve(p_buffer.size() + size_type{!first} + label.size() + value.size() + size_type{3});
     if(!first)
     {
@@ -104,11 +104,11 @@ static void FormatMetricLabels(MetricBuffer & p_buffer,
 
 static constexpr auto gauge_format{" {}\x0a"_cf};
 static void FormatGauge(MetricBuffer & p_buffer,
-                        const MetricData & p_metric)
+                        const MetricData & p_metric_data)
 {
-  FormatMetricLabels(p_buffer, p_metric);
+  FormatMetricLabels(p_buffer, p_metric_data);
 
-  auto value = p_metric.Value();
+  auto value = p_metric_data.Value();
   p_buffer.reserve(p_buffer.size() + size_type{3} + value.size());
 
   fmt::format_to(std::back_inserter(p_buffer),
@@ -119,12 +119,12 @@ static void FormatGauge(MetricBuffer & p_buffer,
 //static constexpr auto gauge_timestamp_format{" {} {}\x0a"_cf};
 static constexpr auto gauge_timestamp_format{" {} {}\x0a"sv};
 static void FormatGaugeTimestamp(MetricBuffer & p_buffer,
-                                 const MetricData & p_metric)
+                                 const MetricData & p_metric_data)
 {
-  FormatMetricLabels(p_buffer, p_metric);
+  FormatMetricLabels(p_buffer, p_metric_data);
 
-  auto value = p_metric.Value();
-  auto timestamp = p_metric.Timestamp();
+  auto value = p_metric_data.Value();
+  auto timestamp = p_metric_data.Timestamp().count();
 
   p_buffer.reserve(p_buffer.size() + size_type{3} + value.size() + yy_util::Digits<decltype(timestamp)>::digits);
 
@@ -135,7 +135,7 @@ static void FormatGaugeTimestamp(MetricBuffer & p_buffer,
 }
 
 void NoFormat(MetricBuffer & /* p_output */,
-              const MetricData & /* p_metric */)
+              const MetricData & /* p_metric_data */)
 {
 }
 

@@ -32,7 +32,6 @@
 
 #include "yy_cpp/yy_flat_set.h"
 
-#include "yy_prometheus_metric_data.h"
 #include "yy_prometheus_cache.h"
 
 namespace yafiyogi::yy_prometheus {

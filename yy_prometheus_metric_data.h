@@ -34,14 +34,15 @@
 
 #include "yy_prometheus_metric_format.h"
 #include "yy_prometheus_metric_types.h"
-#include "yy_prometheus_labels.h"
+#include "yy_values/yy_values_metric_data.hpp"
 
 namespace yafiyogi::yy_prometheus {
 
-struct MetricData final
+struct MetricData:
+      public yy_values::MetricData
 {
-    MetricData(std::string_view p_id,
-               yy_prometheus::Labels && p_labels,
+    MetricData(yy_values::MetricId && p_id,
+               yy_values::Labels && p_labels,
                std::string_view p_help,
                MetricType p_type,
                MetricUnit p_unit,
@@ -50,19 +51,15 @@ struct MetricData final
     constexpr MetricData() noexcept = default;
     constexpr MetricData(const MetricData &) noexcept = default;
     constexpr MetricData(MetricData && p_other) noexcept:
-      m_id(std::move(p_other.m_id)),
-      m_labels(std::move(p_other.m_labels)),
+      yy_values::MetricData(std::move(p_other)),
       m_help(std::move(p_other.m_help)),
-      m_timestamp(p_other.m_timestamp),
-      m_value(std::move(p_other.m_value)),
       m_type(p_other.m_type),
       m_unit(p_other.m_unit),
       m_format(p_other.m_format)
     {
-      m_timestamp = 0;
-      m_type = MetricType::None;
-      m_unit = MetricUnit::None;
-      m_format = &NoFormat;
+      p_other.m_type = MetricType::None;
+      p_other.m_unit = MetricUnit::None;
+      p_other.m_format = &NoFormat;
     }
 
     constexpr MetricData & operator=(const MetricData &) noexcept = default;
@@ -70,12 +67,9 @@ struct MetricData final
     {
       if(this != &p_other)
       {
-        m_id = std::move(p_other.m_id);
-        m_labels = std::move(p_other.m_labels);
+        yy_values::MetricData::operator=(std::move(p_other));
+
         m_help = std::move(p_other.m_help);
-        m_timestamp = p_other.m_timestamp;
-        p_other.m_timestamp = 0;
-        m_value = std::move(p_other.m_value);
         m_type = p_other.m_type;
         p_other.m_type = MetricType::None;
         m_unit = p_other.m_unit;
@@ -89,12 +83,12 @@ struct MetricData final
 
     constexpr bool operator<(const MetricData & other) const noexcept
     {
-      return std::tie(m_id, m_type, m_unit, m_labels) < std::tie(other.m_id, other.m_type, other.m_unit, other.m_labels);
+      return std::tie(Id(), m_type, m_unit, Labels()) < std::tie(other.Id(), other.m_type, other.m_unit, other.Labels());
     }
 
     constexpr bool operator==(const MetricData & other) const noexcept
     {
-      return std::tie(m_id, m_type, m_unit, m_labels) == std::tie(other.m_id, other.m_type, other.m_unit, other.m_labels);
+      return std::tie(Id(), m_type, m_unit, Labels()) == std::tie(other.Id(), other.m_type, other.m_unit, other.Labels());
     }
 
     void Format(MetricBuffer & p_buffer) const
@@ -102,49 +96,12 @@ struct MetricData final
       m_format(p_buffer, *this);
     }
 
-    constexpr const std::string & Id() const noexcept
-    {
-      return m_id;
-    }
-
-    constexpr yy_prometheus::Labels & Labels() noexcept
-    {
-      return m_labels;
-    }
-
-    constexpr const yy_prometheus::Labels & Labels() const noexcept
-    {
-      return m_labels;
-    }
-
-    void Labels(const yy_prometheus::Labels & p_labels) noexcept;
-
     constexpr const std::string & Help() const noexcept
     {
       return m_help;
     }
 
-    constexpr int64_t Timestamp() const noexcept
-    {
-      return m_timestamp;
-    }
-
-    constexpr void Timestamp(int64_t p_timestamp) noexcept
-    {
-      m_timestamp = p_timestamp;
-    }
-
-    constexpr const std::string_view Value() const noexcept
-    {
-      return m_value;
-    }
-
-    constexpr void Value(std::string_view p_value) noexcept
-    {
-      m_value = p_value;
-    }
-
-    constexpr MetricType Type() const noexcept
+    constexpr yy_prometheus::MetricType MetricType() const noexcept
     {
       return m_type;
     }
@@ -154,13 +111,16 @@ struct MetricData final
       return m_unit;
     }
 
+    void swap(MetricData & p_other) noexcept;
+
+    friend void swap(MetricData & p_lhs, MetricData & p_rhs) noexcept
+    {
+      p_lhs.swap(p_rhs);
+    }
+
   private:
-    std::string m_id{};
-    yy_prometheus::Labels m_labels{};
     std::string m_help{};
-    int64_t m_timestamp = 0;
-    std::string m_value{};
-    MetricType m_type = MetricType::None;
+    yy_prometheus::MetricType m_type = yy_prometheus::MetricType::None;
     MetricUnit m_unit = MetricUnit::None;
     MetricFormatFn m_format = &NoFormat;
 };

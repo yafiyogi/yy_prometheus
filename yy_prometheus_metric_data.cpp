@@ -29,14 +29,14 @@
 
 namespace yafiyogi::yy_prometheus {
 
-MetricData::MetricData(std::string_view p_id,
-                       yy_prometheus::Labels && p_labels,
+MetricData::MetricData(yy_values::MetricId && p_id,
+                       yy_values::Labels && p_labels,
                        std::string_view p_help,
-                       MetricType p_type,
+                       yy_prometheus::MetricType p_type,
                        MetricUnit p_unit,
                        MetricTimestamp p_timestamp) noexcept:
-  m_id(p_id),
-  m_labels(std::move(p_labels)),
+  yy_values::MetricData(std::move(p_id),
+                        std::move(p_labels)),
   m_help(p_help),
   m_type(p_type),
   m_unit(p_unit)
@@ -55,9 +55,14 @@ MetricData::MetricData(std::string_view p_id,
   }
 }
 
-void MetricData::Labels(const yy_prometheus::Labels & p_labels) noexcept
+void MetricData::swap(MetricData & p_other) noexcept
 {
-  m_labels = p_labels;
+  if(this != &p_other)
+  {
+    yy_values::MetricData::swap(p_other);
+    std::swap(m_help, p_other.m_help);
+    std::swap(m_type, p_other.m_type);
+    std::swap(m_unit, p_other.m_unit);
+  }
 }
-
 } // namespace yafiyogi::yy_prometheus

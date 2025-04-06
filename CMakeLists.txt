@@ -56,7 +56,6 @@ target_sources(yy_prometheus
   PRIVATE
     yy_prometheus_cache.cpp
     yy_prometheus_configure.cpp
-    yy_prometheus_labels.cpp
     yy_prometheus_metric_data.cpp
     yy_prometheus_metric_format.cpp
     yy_prometheus_style.cpp
@@ -65,8 +64,6 @@ target_sources(yy_prometheus
       yy_prometheus_cache.h
       yy_prometheus_configure.h
       yy_prometheus_defaults.h
-      yy_prometheus_labels.h
-      yy_prometheus_labels_fwd.h
       yy_prometheus_metric_data.h
       yy_prometheus_metric_format.h
       yy_prometheus_metric_types.h
