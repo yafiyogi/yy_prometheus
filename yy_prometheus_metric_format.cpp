@@ -60,7 +60,7 @@ void FormatHeaders(MetricBuffer & p_buffer,
                  metric_type);
   if(p_show_unit)
   {
-    auto metric_unit = yy_prometheus::decode_metric_unit(p_metric_data.Unit());
+    auto metric_unit = yy_prometheus::decode_metric_unit(p_metric_data.MetricUnit());
     p_buffer.reserve(p_buffer.size() + metric_unit.size());
 
     fmt::format_to(std::back_inserter(p_buffer),

@@ -24,35 +24,37 @@
 
 */
 
+#include "fmt/format.h"
+
+#include "yy_values/yy_values_metric_id_fmt.hpp"
+
 #include "yy_prometheus_metric_data.h"
-#include "yy_prometheus_metric_format.h"
 
 namespace yafiyogi::yy_prometheus {
+
+MetricData::MetricData(const yy_values::MetricId & p_id) noexcept:
+  yy_values::MetricData(p_id)
+{
+}
+
+MetricData::MetricData(yy_values::MetricId && p_id,
+                       yy_values::Labels && p_labels) noexcept:
+  yy_values::MetricData(std::move(p_id),
+                        std::move(p_labels))
+{
+}
 
 MetricData::MetricData(yy_values::MetricId && p_id,
                        yy_values::Labels && p_labels,
                        std::string_view p_help,
                        yy_prometheus::MetricType p_type,
-                       MetricUnit p_unit,
-                       MetricTimestamp p_timestamp) noexcept:
+                       yy_prometheus::MetricUnit p_unit) noexcept:
   yy_values::MetricData(std::move(p_id),
                         std::move(p_labels)),
   m_help(p_help),
   m_type(p_type),
   m_unit(p_unit)
 {
-  switch(p_timestamp)
-  {
-    case MetricTimestamp::Off:
-      m_format = decode_metric_format_fn(p_type);
-      break;
-
-    case MetricTimestamp::On:
-      [[fallthrough]];
-    default:
-      m_format = decode_metric_timestamp_format_fn(p_type);
-      break;
-  }
 }
 
 void MetricData::swap(MetricData & p_other) noexcept
@@ -63,6 +65,8 @@ void MetricData::swap(MetricData & p_other) noexcept
     std::swap(m_help, p_other.m_help);
     std::swap(m_type, p_other.m_type);
     std::swap(m_unit, p_other.m_unit);
+    std::swap(m_format, p_other.m_format);
   }
 }
+
 } // namespace yafiyogi::yy_prometheus

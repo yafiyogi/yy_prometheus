@@ -26,11 +26,12 @@
 
 #pragma once
 
-#include <cstdint>
-
 #include <string>
 
+#include "yy_cpp/yy_types.hpp"
 #include "yy_cpp/yy_vector.h"
+#include "yy_cpp/yy_observer_ptr.hpp"
+#include "yy_values/yy_values_metric_data.hpp"
 
 #include "yy_prometheus_metric_format.h"
 #include "yy_prometheus_metric_types.h"
@@ -41,12 +42,15 @@ namespace yafiyogi::yy_prometheus {
 struct MetricData:
       public yy_values::MetricData
 {
+    MetricData(const yy_values::MetricId & p_id) noexcept;
+    MetricData(yy_values::MetricId && p_id,
+               yy_values::Labels && p_labels) noexcept;
+
     MetricData(yy_values::MetricId && p_id,
                yy_values::Labels && p_labels,
                std::string_view p_help,
-               MetricType p_type,
-               MetricUnit p_unit,
-               MetricTimestamp p_timestamp) noexcept;
+               yy_prometheus::MetricType p_type,
+               yy_prometheus::MetricUnit p_unit) noexcept;
 
     constexpr MetricData() noexcept = default;
     constexpr MetricData(const MetricData &) noexcept = default;
@@ -106,9 +110,24 @@ struct MetricData:
       return m_type;
     }
 
-    constexpr MetricUnit Unit() const noexcept
+    constexpr void MetricType(yy_prometheus::MetricType p_type) noexcept
+    {
+      m_type = p_type;
+    }
+
+    constexpr yy_prometheus::MetricUnit MetricUnit() const noexcept
     {
       return m_unit;
+    }
+
+    constexpr void MetricUnit(yy_prometheus::MetricUnit p_unit) noexcept
+    {
+      m_unit = p_unit;
+    }
+
+    void MetricFormat(MetricFormatFn p_format) noexcept
+    {
+      m_format = p_format;
     }
 
     void swap(MetricData & p_other) noexcept;
@@ -121,10 +140,12 @@ struct MetricData:
   private:
     std::string m_help{};
     yy_prometheus::MetricType m_type = yy_prometheus::MetricType::None;
-    MetricUnit m_unit = MetricUnit::None;
+    yy_prometheus::MetricUnit m_unit = MetricUnit::None;
     MetricFormatFn m_format = &NoFormat;
 };
 
+using MetricDataObsPtr = yy_data::observer_ptr<MetricData>;
 using MetricDataVector = yy_quad::simple_vector<MetricData>;
+using MetricDataVectorPtr = yy_data::observer_ptr<MetricDataVector>;
 
 } // namespace yafiyogi::yy_prometheus
