@@ -38,31 +38,21 @@ namespace yafiyogi::yy_prometheus {
 
 using namespace std::string_view_literals;
 
+namespace {
+
 static constexpr const auto metric_type_names =
   yy_data::make_lookup<std::string_view, MetricType>(MetricType::None,
                                                      {{g_metric_type_gauge, MetricType::Gauge}});
-
-MetricType decode_metric_type_name(std::optional<std::string_view> p_type_name)
-{
-  if(p_type_name.has_value())
-  {
-    const std::string type_name{yy_util::to_lower(yy_util::trim(p_type_name.value()))};
-
-    return metric_type_names.lookup(type_name);
-  }
-
-  return MetricType::None;
-}
 
 static constexpr const auto metric_types =
   yy_data::make_lookup<MetricType, std::string_view>(""sv,
                                                      {{MetricType::Gauge, g_metric_type_gauge}});
 
-
-std::string_view decode_metric_type(MetricType p_type)
-{
-  return metric_types.lookup(p_type);
-}
+constexpr const auto g_timestamp_types =
+  yy_data::make_lookup<std::string_view,
+                       yy_prometheus::MetricTimestamp>(yy_prometheus::MetricTimestamp::On,
+                                                       {{"on"sv, yy_prometheus::MetricTimestamp::On},
+                                                        {"off"sv, yy_prometheus::MetricTimestamp::Off}});
 
 static constexpr const auto metric_unit_names =
   yy_data::make_lookup<std::string_view, MetricUnit>(MetricUnit::None,
@@ -78,18 +68,6 @@ static constexpr const auto metric_unit_names =
                                                       {g_metric_unit_power, MetricUnit::Power},
                                                       {g_metric_unit_mass, MetricUnit::Mass}});
 
-MetricUnit decode_metric_unit_name(const std::optional<std::string_view> p_unit_name)
-{
-  if(p_unit_name.has_value())
-  {
-    const std::string unit_name{yy_util::to_lower(yy_util::trim(p_unit_name.value()))};
-
-    return metric_unit_names.lookup(unit_name);
-  }
-
-  return MetricUnit::None;
-}
-
 static constexpr const auto metric_units =
   yy_data::make_lookup<MetricUnit, std::string_view>(""sv,
                                                      {{MetricUnit::Time, g_metric_unit_time},
@@ -103,9 +81,48 @@ static constexpr const auto metric_units =
                                                       {MetricUnit::Power, g_metric_unit_power},
                                                       {MetricUnit::Mass, g_metric_unit_mass}});
 
+} // anonymous namespace
+
+std::string_view decode_metric_type(MetricType p_type)
+{
+  return metric_types.lookup(p_type);
+}
+
+MetricType decode_metric_type_name(std::optional<std::string_view> p_type_name)
+{
+  if(p_type_name.has_value())
+  {
+    const std::string type_name{yy_util::to_lower(yy_util::trim(p_type_name.value()))};
+
+    return metric_type_names.lookup(type_name);
+  }
+
+  return MetricType::None;
+}
+
+MetricTimestamp decode_metric_timestamp(std::string_view p_timestamp,
+                                        MetricTimestamp p_default_timestamp)
+{
+  return g_timestamp_types.lookup(yy_util::to_lower(yy_util::trim(p_timestamp)),
+                                  p_default_timestamp);
+
+}
+
 std::string_view decode_metric_unit(MetricUnit p_unit)
 {
   return metric_units.lookup(p_unit);
+}
+
+MetricUnit decode_metric_unit_name(const std::optional<std::string_view> p_unit_name)
+{
+  if(p_unit_name.has_value())
+  {
+    const std::string unit_name{yy_util::to_lower(yy_util::trim(p_unit_name.value()))};
+
+    return metric_unit_names.lookup(unit_name);
+  }
+
+  return MetricUnit::None;
 }
 
 } // namespace yafiyogi::yy_prometheus
