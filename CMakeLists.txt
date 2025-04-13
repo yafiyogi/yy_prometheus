@@ -74,7 +74,6 @@ install(TARGETS yy_prometheus
   FILE_SET HEADERS DESTINATION include/yy_prometheus)
 
 install(EXPORT yy_prometheusTargets
-  FILE yy_prometheusTargets.cmake
   NAMESPACE yy_prometheus::
   DESTINATION lib/cmake/yy_prometheus)
 
