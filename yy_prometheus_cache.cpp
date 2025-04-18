@@ -24,26 +24,23 @@
 
 */
 
-#include <cstddef>
-
 #include <chrono>
 
-#include "spdlog/spdlog.h"
-
 #include "yy_cpp/yy_flat_set.h"
+#include "yy_values/yy_values_metric_id_fmt.hpp"
 
 #include "yy_prometheus_cache.h"
 
 namespace yafiyogi::yy_prometheus {
 
-void MetricDataCache::Add(const MetricData & p_metric_data)
+void MetricDataCache::Add(MetricData & p_metric_data)
 {
   std::unique_lock lck{m_cache_mtx};
 
-  m_store.emplace_or_assign(p_metric_data);
+  m_store.swap_in(p_metric_data);
 }
 
-void MetricDataCache::Add(const MetricDataVector & p_metric_data)
+void MetricDataCache::Add(MetricDataVector & p_metric_data)
 {
   for(auto & metric_data : p_metric_data)
   {

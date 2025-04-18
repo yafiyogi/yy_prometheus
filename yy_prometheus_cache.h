@@ -35,8 +35,8 @@ namespace yafiyogi::yy_prometheus {
 class MetricDataCache final
 {
   public:
-    void Add(const MetricData & p_metric_data);
-    void Add(const MetricDataVector & p_metric_data);
+    void Add(MetricData & p_metric_data);
+    void Add(MetricDataVector & p_metric_data);
 
     template<typename Visitor>
     void Visit(Visitor && visitor)
