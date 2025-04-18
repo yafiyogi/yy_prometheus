@@ -85,14 +85,37 @@ struct MetricData:
       return *this;
     }
 
-    constexpr bool operator<(const MetricData & other) const noexcept
+    constexpr bool operator<(const MetricData & p_other) const noexcept
     {
-      return std::tie(Id(), m_type, m_unit, Labels()) < std::tie(other.Id(), other.m_type, other.m_unit, other.Labels());
+      return compare(p_other) < 0;
     }
 
-    constexpr bool operator==(const MetricData & other) const noexcept
+    constexpr bool operator==(const MetricData & p_other) const noexcept
     {
-      return std::tie(Id(), m_type, m_unit, Labels()) == std::tie(other.Id(), other.m_type, other.m_unit, other.Labels());
+      return compare(p_other) == 0;
+    }
+
+    constexpr int compare(const MetricData & p_other) const noexcept
+    {
+      if(int comp = Id().compare(p_other.Id());
+         0 != comp)
+      {
+        return comp;
+      }
+
+      if(int comp = static_cast<int>(m_type) - static_cast<int>(p_other.m_type);
+         0 != comp)
+      {
+        return comp;
+      }
+
+      if(int comp = static_cast<int>(m_unit) - static_cast<int>(p_other.m_unit);
+         0 != comp)
+      {
+        return comp;
+      }
+
+      return Labels().compare(p_other.Labels());
     }
 
     void Format(MetricBuffer & p_buffer) const
