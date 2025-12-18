@@ -87,4 +87,4 @@ install(FILES "yy_prometheusConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/yy_promet
 
 #add_subdirectory(unit_tests)
 
-add_yy_tidy_all(yy_prometheus)
+add_yy_tidy_targets(yy_prometheus)
